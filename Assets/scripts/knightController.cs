@@ -10,7 +10,8 @@ public class knightController : MonoBehaviour
     float speed = 4;       //general speed
     float rotSpeed = 80; //rotation speed
     float rot = 0f;
-    float gravity = 8; 
+    float gravity = 8;
+    private AudioSource audioSound; // for attacking audio sword sound
 
     Vector3 moveDir = Vector3.zero; //same as saying (0,0,0)
 
@@ -25,6 +26,7 @@ public class knightController : MonoBehaviour
         //referenced animator and controller on player below:
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
+        audioSound = GetComponent<AudioSource>(); // to play attacking sword sound
 
 	}
     //----------------------------------------------------------
@@ -102,6 +104,7 @@ public class knightController : MonoBehaviour
     void Attacking()
     {
         StartCoroutine (AttackRoutine());
+        audioSound.Play();//play sword attack sound!
     }
 
     //----------------------------------------------------------
