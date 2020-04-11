@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class knightController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //----------------------------------------------------------
     // VARIABLES BELOW:
     //----------------------------------------------------------
+    Camera cam;
+    public LayerMask movementMask;
     float speed = 4;       //general speed
     float rotSpeed = 80; //rotation speed
     float rot = 0f;
@@ -23,6 +25,7 @@ public class knightController : MonoBehaviour
     //----------------------------------------------------------
 	void Start ()
     {
+        cam=Camera.main;
         //referenced animator and controller on player below:
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
@@ -36,6 +39,25 @@ public class knightController : MonoBehaviour
     {
         Movement();
         GetInput();
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit,100,movementMask))
+            {
+                Debug.Log("We hit "+hit.collider.name+ " "+ hit.point);
+                //move to what we hit
+
+                //stop focusing on objects
+            }
+
+        }
+        if(Input.GetMouseButtonDown(1))
+        {
+           
+
+        }
     }
     //----------------------------------------------------------
     // MOVEMENT BELOW:
@@ -119,6 +141,9 @@ public class knightController : MonoBehaviour
         anim.SetBool("attacking", false);//set the bool condition value to false
 
     }
+    
+
+
 
 }
 
