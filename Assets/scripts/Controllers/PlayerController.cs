@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class PlayerController : MonoBehaviour
 {
     //----------------------------------------------------------
     // VARIABLES BELOW:
     //----------------------------------------------------------
     Camera cam;
+
+    public Interactable focus;
     public LayerMask movementMask;
+    UnityEngine.AI.NavMeshAgent agent;
+    Transform target;
     float speed = 4;       //general speed
     float rotSpeed = 80; //rotation speed
     float rot = 0f;
@@ -26,6 +31,7 @@ public class PlayerController : MonoBehaviour
 	void Start ()
     {
         cam=Camera.main;
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         //referenced animator and controller on player below:
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
@@ -37,27 +43,79 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------
     void Update()
     {
-        Movement();
-        GetInput();
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit,100,movementMask))
+         //if right mouse button is clicked go to interactable object
+            if(Input.GetMouseButtonDown(1))
             {
-                Debug.Log("We hit "+hit.collider.name+ " "+ hit.point);
-                //move to what we hit
+                Debug.Log("Right mouse button clicked");
+                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                 RaycastHit hit;
 
-                //stop focusing on objects
+                if(Physics.Raycast(ray,out hit,100))
+                {
+                    anim.SetBool("running", true); //setting the condition to determine (RUNNING)
+                    anim.SetInteger("condition", 1);// this sets the condition to 1 to start animation
+                    //check if we hit our interactable object
+                    Interactable interactable= hit.collider.GetComponent<Interactable>();
+                    //if we did set it as out focus
+                    if(interactable!=null)
+                    {
+                         SetFocus(interactable);
+
+                    }
+                }   
+
             }
+         Movement();
+         GetInput();
+    }
 
-        }
-        if(Input.GetMouseButtonDown(1))
+    void SetFocus(Interactable newFocus){
+        if(newFocus!=focus)
         {
-           
+            if(focus!=null)
+            {
+                focus.OnDefocused();
+            }
+            FollowTarget(newFocus);
+            if(target!=null)
+            {
+               
+                agent.SetDestination(target.position);
+                FaceTarget();
+            
+            }
+        } 
+        newFocus.OnFocused(transform);
+    }
+     public void FollowTarget(Interactable newTarget){
+        agent.stoppingDistance = newTarget.radius+0.8f;
+        newTarget.setStoppingDistance(agent.stoppingDistance);
+        agent.updateRotation=false;
+        target=newTarget.interactionTransform;
 
+        //once target has been reached:
+        anim.SetBool("running", false); //setting the condition to determine (NOT RUNNING)
+        anim.SetInteger("condition", 0);// this sets the condition to 0 to go back to idle animation
+    }
+     public void StopFollowingTarget(){
+         agent.stoppingDistance=0f;
+         agent.updateRotation=true;
+        target = null;
+    }
+    public void FaceTarget(){
+        Vector3 direction = (target.position-transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x,0,direction.z));
+        transform.rotation=Quaternion.Slerp(transform.rotation,lookRotation,Time.deltaTime*5f);
+    }
+    void RemoveFocus()
+    {
+        if(focus!=null)
+        {
+            focus.OnDefocused();
         }
+        
+        focus = null;
+        StopFollowingTarget();
     }
     //----------------------------------------------------------
     // MOVEMENT BELOW:
@@ -69,6 +127,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W)) //if holding down the "w" button
             {
+                 RemoveFocus();
                 if (anim.GetBool("attacking") == true) //check if you are attacking
                 {
                     return;
@@ -99,6 +158,7 @@ public class PlayerController : MonoBehaviour
 
 
     }
+   
     //----------------------------------------------------------
     // GETINPUT BELOW:
     //----------------------------------------------------------
