@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------
     Camera cam;
 
-    public Interactable focus;
+
+    
     public LayerMask movementMask;
     UnityEngine.AI.NavMeshAgent agent;
     Transform target;
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
 
     CharacterController controller;
     Animator anim;
+   
 
 	//----------------------------------------------------------
     // START BELOW:
@@ -43,80 +45,12 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------
     void Update()
     {
-         //if right mouse button is clicked go to interactable object
-            if(Input.GetMouseButtonDown(1))
-            {
-                Debug.Log("Right mouse button clicked");
-                Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                 RaycastHit hit;
 
-                if(Physics.Raycast(ray,out hit,100))
-                {
-                    anim.SetBool("running", true); //setting the condition to determine (RUNNING)
-                    anim.SetInteger("condition", 1);// this sets the condition to 1 to start animation
-                    //check if we hit our interactable object
-                    Interactable interactable= hit.collider.GetComponent<Interactable>();
-                    //if we did set it as out focus
-                    if(interactable!=null)
-                    {
-                         SetFocus(interactable);
-
-                    }
-                }   
-
-            }
-         Movement();
-         GetInput();
+        Movement();
+        GetInput();
     }
 
-    void SetFocus(Interactable newFocus){
-        if(newFocus!=focus)
-        {
-            if(focus!=null)
-            {
-                focus.OnDefocused();
-            }
-            FollowTarget(newFocus);
-            if(target!=null)
-            {
-               
-                agent.SetDestination(target.position);
-                FaceTarget();
-            
-            }
-        } 
-        newFocus.OnFocused(transform);
-    }
-     public void FollowTarget(Interactable newTarget){
-        agent.stoppingDistance = newTarget.radius+0.8f;
-        newTarget.setStoppingDistance(agent.stoppingDistance);
-        agent.updateRotation=false;
-        target=newTarget.interactionTransform;
-
-        //once target has been reached:
-        anim.SetBool("running", false); //setting the condition to determine (NOT RUNNING)
-        anim.SetInteger("condition", 0);// this sets the condition to 0 to go back to idle animation
-    }
-     public void StopFollowingTarget(){
-         agent.stoppingDistance=0f;
-         agent.updateRotation=true;
-        target = null;
-    }
-    public void FaceTarget(){
-        Vector3 direction = (target.position-transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x,0,direction.z));
-        transform.rotation=Quaternion.Slerp(transform.rotation,lookRotation,Time.deltaTime*5f);
-    }
-    void RemoveFocus()
-    {
-        if(focus!=null)
-        {
-            focus.OnDefocused();
-        }
-        
-        focus = null;
-        StopFollowingTarget();
-    }
+   
     //----------------------------------------------------------
     // MOVEMENT BELOW:
     //----------------------------------------------------------
@@ -127,7 +61,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.W)) //if holding down the "w" button
             {
-                 RemoveFocus();
+                
                 if (anim.GetBool("attacking") == true) //check if you are attacking
                 {
                     return;
@@ -166,8 +100,9 @@ public class PlayerController : MonoBehaviour
     {
         if (controller.isGrounded)
         {
-            if(Input.GetMouseButtonDown(0)) //0 means left mouse button
+            if(Input.GetKeyDown(KeyCode.Space)) //spacebar to attack
             {
+                
                 if (anim.GetBool("running") == true) 
                 {
                     anim.SetBool("running", false);//if running stop running 
@@ -175,8 +110,8 @@ public class PlayerController : MonoBehaviour
                 }
                 if (anim.GetBool("running") == false)
                 {
-                   Attacking();
-                }      
+                    Attacking();
+                }  
             }
         }
     }
@@ -187,6 +122,7 @@ public class PlayerController : MonoBehaviour
     {
         StartCoroutine (AttackRoutine());
         audioSound.Play();//play sword attack sound!
+       
     }
 
     //----------------------------------------------------------
@@ -194,9 +130,21 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------
     IEnumerator AttackRoutine()//Coroutine with IEnumerator - the ability to wait and resume from same point .
     {
+       
         anim.SetBool("attacking", true); //set the bool condition value to true
         anim.SetInteger("condition", 2); //set condition to 2 so start attacking!
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.35f);
+        var enemyPos = GameObject.FindGameObjectWithTag("Enemy").transform.position;
+        var enemy = GameObject.FindGameObjectWithTag("Enemy");
+        
+        if(Vector3.Distance(transform.position,enemyPos)<=3)
+        {
+            Debug.Log(enemy.name +" is dead");
+            Destroy(enemy.gameObject);
+        }
+        else {
+            Debug.Log("Distance is NOT less than or equal to 3");
+        }
         anim.SetInteger("condition", 0); //set state condition to be 0 (idle)
         anim.SetBool("attacking", false);//set the bool condition value to false
 

@@ -354,8 +354,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1478649423}
-        m_MethodName: ButtonMoveScene
-        m_Mode: 5
+        m_MethodName: Start_Level
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -783,7 +783,7 @@ GameObject:
   - component: {fileID: 1478649424}
   - component: {fileID: 1478649423}
   m_Layer: 0
-  m_Name: MoveSceneObject
+  m_Name: SceneController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -798,10 +798,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1478649422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c394e1287bc08334087c39ab3b670820, type: 3}
+  m_Script: {fileID: 11500000, guid: e7829595334893e4888c0ce32cc3f699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextlevel: GameScene
 --- !u!4 &1478649424
 Transform:
   m_ObjectHideFlags: 0
@@ -991,8 +990,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1478649423}
-        m_MethodName: ButtonMoveScene
-        m_Mode: 5
+        m_MethodName: Rules
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

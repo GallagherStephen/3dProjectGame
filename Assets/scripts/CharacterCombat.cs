@@ -2,19 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(CharacterStats))]
+[RequireComponent(typeof(CharacterStats))]
 public class CharacterCombat : MonoBehaviour
 {
-    /*private CharacterStats myStats;
+    public float attackSpeed=1f;
+    private float attackCooldown =0f;
+    CharacterStats myStats;
 
     void Start()
     {
-        myStats = getComponent<CharacterStats>();
+        myStats = GetComponent<CharacterStats>();
 
 
     }
+    void Update(){
+        attackCooldown-=Time.deltaTime;
+    }
    public void Attack(CharacterStats targetStats)
    {
-       targetStats.takeDamage(myStats.damage.getValue());
-   }*/
+       if(attackCooldown<=0f)
+       {
+           targetStats.TakeDamage(myStats.damage.GetValue());
+           attackCooldown = 1f/attackSpeed;
+       }
+       
+   }
 }

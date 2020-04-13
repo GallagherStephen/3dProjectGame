@@ -13,14 +13,11 @@ public class CharacterStats : MonoBehaviour
 
     }
     void Update(){
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            takeDamage(10); 
-        }
+      
     }
-    public void takeDamage(int damage)
+    public void TakeDamage(int damage)
     {
-        damage-=armour.getValue();
+        damage-=armour.GetValue();
         damage= Mathf.Clamp(damage,0,int.MaxValue);
         currentHealth -=damage;
         Debug.Log(transform.name+" takes "+damage+" damage. ");
@@ -33,6 +30,6 @@ public class CharacterStats : MonoBehaviour
     public virtual void Die()
     {
         //Die - kill character
-        Debug.Log(transform.name+" died. ");
+       Destroy(gameObject);
     }
 }
