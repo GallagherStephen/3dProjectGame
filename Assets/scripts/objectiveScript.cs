@@ -14,7 +14,7 @@ public class objectiveScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        UiObject.SetActive(true);
+        UiObject.SetActive(false);
     }
 
     //===================================================
