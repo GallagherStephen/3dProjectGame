@@ -4649,7 +4649,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Welcome to Windmill Grounds!
+  m_Text: Welcome to the Windmill Grounds!
 --- !u!222 &361759493
 CanvasRenderer:
   m_ObjectHideFlags: 0
